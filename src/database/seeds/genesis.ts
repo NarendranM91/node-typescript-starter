@@ -1,5 +1,6 @@
 import { Knex } from 'knex';
 import { hash } from '../../helpers/bcrypt';
+import { env } from '../../helpers/env-helper';
 
 export const seed = async (knex: Knex): Promise<void> => {
   // Deletes ALL existing entries
@@ -19,14 +20,14 @@ export const seed = async (knex: Knex): Promise<void> => {
   ]);
 
   //   USERS
-  const password = await hash('admin');
+  const password = await hash(env.string('SEED_PASSWORD', 'admin', false));
   await knex('users').insert([
     {
       role: 'AUTHENTICATED',
-      username: 'admin',
-      email: 'admin@template.io',
+      username: env.string('SEED_USERNAME', 'admin', false), // 'admin',
+      email: env.string('SEED_EMAIL', 'admin@template.io', false), // 'admin@template.io',
       password,
-      name: 'Admin',
+      name: env.string('SEED_NAME', 'Admin', false),
       confirmed: true,
     },
   ]);
